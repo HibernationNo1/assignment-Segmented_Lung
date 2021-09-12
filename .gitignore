@@ -5,5 +5,5 @@ result/
 samples/
 result_dataset/
 result_img/
-
+mask-rcnn/
 *.txt
