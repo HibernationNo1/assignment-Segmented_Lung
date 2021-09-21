@@ -26,22 +26,27 @@ class BaseConfig():
    	
 	# validation을 진행할 step의 수
 	VALIDATION_STEPS = 50
-		
-	# model사용 용도. "training" or "inference"
-	MODE = None
-    
+
 	# model의 input으로 사용하기 위해 resize한 image의 size
 	# 최소값 : IMAGE_MIN_DIM, 최대값 : IMAGE_MAX_DIM
 	IMAGE_MIN_DIM = 800
 	IMAGE_MAX_DIM = 1024
 	IMAGE_CHANNEL_COUNT = 3
 
+	# image의 크기를 결정하는 scale. 만약 2라면, MIN_IMAGE_DIM이 없더라도 2배의 size로 resize됨
+	IMAGE_MIN_SCALE = 0
+
+	# How many anchors per image to use for RPN training
+	RPN_TRAIN_ANCHORS_PER_IMAGE = 256
+
+	# Maximum number of ground truth instances to use in one image
+	MAX_GT_INSTANCES = 100
     
 	# dataset에 속한 class의 개수 중 실제 classification을 진행할 class의 개수
 	# (including background)
 	NUM_CLASSES = 1	# Override in sub-classes
     
-    
+
 	# batch normalization layer를 train할지, 동결시킬지 결정하는 속성 
 	#     None: Train BN layers. This is the normal mode
 	#     False: Freeze BN layers. Good when using a small batch size
@@ -58,18 +63,18 @@ class BaseConfig():
     
 	# FPN의 Top-Down과정에서 만들어지는 M계층 feature pyramid의 channel 개수
 	TOP_DOWN_PYRAMID_SIZE  = 256
-    
-	# FPN의 Top-Down과정에서 만들어지는 P계층 feature pyramid의 channel 개수
-	TOP_DOWN_LAST_FILTER = 128
-    
-	# FPN Pyramid의 각각의 layer에서의 strides == subsampled_ratio
-	FPN_PYAMID_STRIDES = BACKBONE_STRIDES
+
       
 	# RPN Anchor의 stride
 	# RPN_ANCHOR_STRIDE = 1 인 경우 backbone network의 각 cell당 anchor 생성
 	# RPN_ANCHOR_STRIDE = 2 인 경우 
 	# anchors are created for every other cell, and so on.?? 이해가 안감
 	RPN_ANCHOR_STRIDE = 1
+
+	IMAGE_RESIZE_MODE = "square"
+
+	# Image mean (RGB)
+	MEAN_PIXEL = np.array([123.7, 116.8, 103.9])
     
 	# RPN Anchor의 shape 비율  width/height의 결과값
 	RPN_ANCHOR_RATIOS = [0.5, 1, 2]
@@ -130,6 +135,22 @@ class BaseConfig():
 	LEARNING_RATE = 0.001
 	LEARNING_MOMENTUM = 0.9
 
+	# Gradient norm clipping
+	GRADIENT_CLIP_NORM = 5.0
+
+	# Weight decay regularization
+	WEIGHT_DECAY = 0.0001
+
+	# Loss weights for more precise optimization.
+	# Can be used for R-CNN training setup.
+	LOSS_WEIGHTS = {
+		"rpn_class_loss": 1.,
+		"rpn_bbox_loss": 1.,
+		"mrcnn_class_loss": 1.,
+		"mrcnn_bbox_loss": 1.,
+		"mrcnn_mask_loss": 1.
+	}
+
 	def __init__(self):
 		"""
 		Set values of computed attributes.
@@ -167,32 +188,58 @@ class TrainConfig(BaseConfig):
     
 	해당 project의 dataset 기준으로 값 재정의
 	"""
+	NAME = "lungs"
     
-	# 해당 poject의 dataset은 크기가 작음
-	STEPS_PER_EPOCH = 50
-	VALIDATION_STEPS = 25
+	
+	STEPS_PER_EPOCH = 300
+	VALIDATION_STEPS = 200
+
+	POST_NMS_ROIS_TRAINING = 500
+	POST_NMS_ROIS_INFERENCE = 250
     
-	# 해당 poject의 dataset은 data의 개수가 적기 때문에 batch_size = 1로 맞춰본다.
+	# 해당 poject의 dataset은 data의 개수가 적기 때문에 batch_size = 2로 맞춰본다.
 	#   + 해당 poject 진행자는 3GB GPU 사용중
-	IMAGES_PER_GPU = 1
+	IMAGES_PER_GPU = 2
 	GPU_COUNT = 1
     
-	# 해당project의 dataset에서 class는 left, right lungs 2개  
-	NUM_CLASSES = 1 + 2  # background + 2 shapes
+	# 해당project의 dataset에서 class는 left, right lungs, background
+	NUM_CLASSES = 3  
     
 	# 빠른 학습을 위해 작은 size의 image를 input
 	# 학습 후 성능 향상을 위해 image size을 조금씩 늘려볼것 (800~1024)
 	IMAGE_MIN_DIM = 256
 	IMAGE_MAX_DIM = 256
     
+	USE_MINI_MASK = False
+
 	# input image가 작기 때문에 anchor size도 작은걸로 사용 
 	# 해당 project의 object 크기는 128을 넘어가지 않음
-	RPN_ANCHOR_SCALES = [8, 16, 32, 64, 128]
+	RPN_ANCHOR_SCALES = [16, 32, 64, 128, 256]
     
-	# 해당project의 dataset에서 class는 left, right lungs 2개 뿐이므로 ROI가 많이 필요 없음
-	TRAIN_ROIS_PER_IMAGE = 32
+	# 해당project의 dataset에서 ROI가 많이 필요 없음
+	TRAIN_ROIS_PER_IMAGE = 16
 
-	MODE = "training"
+	LEARNING_RATE = 0.001
 
 	# train data와 validation data간의 비율
-	TRAIN_DATA_RATIO = 0.8
+	TRAIN_DATA_RATIO = 0.9
+
+	# anchor 적어도 충분히 detection하는데 무리 없을것임
+	RPN_TRAIN_ANCHORS_PER_IMAGE = 32
+
+	
+	MAX_GT_INSTANCES = 5
+
+
+	TOP_DOWN_LAST_FILTER  = 128
+
+class InferenceConfig(TrainConfig):
+	GPU_COUNT = 1
+	IMAGES_PER_GPU = 1
+
+	# for test
+	TRAIN_DATA_RATIO = 1
+
+	DETECTION_MAX_INSTANCES = 20
+
+	SAVE_RESULT = True
