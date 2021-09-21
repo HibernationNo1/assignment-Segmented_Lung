@@ -486,11 +486,7 @@ class PyramidROIAlign(KL.Layer):
 		# Re-add the batch dimension
 		# shape.shape = (batch, num_boxes, pool_height, pool_width, channels)
 		shape = tf.concat([tf.shape(boxes)[:2], tf.shape(pooled)[1:]], axis=0)
-		
-		# ???
-		# TODO : 위의 batch * 4가 아니라 batch * num_boxes 여야 한다.
-		# 그러기 위해서 roi_level 부터 [batch, num_boxes]이 아니라
-		# [batch * num_boxes] 이여야 한다.
+
 		# pooled : [batch, num_boxes, pool_height, pool_width, channels]
 		pooled = tf.reshape(pooled, shape)
 		
@@ -1914,7 +1910,6 @@ class MaskRCNN():
 		# rpn_class.shape = (batch, anchors, (background_prob, foreground_prob))
 		# rpn_probs_p1.shape = (batch, anchors, (background_prob, foreground_prob))
 		# rpn_bbox_p1.shape =  (batch, anchors, (dx, dy, dw, dh))
-		# anchors.shape = h * w * anchors_per_location * 4 (P2~P6)
 		rpn_class_logits, rpn_class, rpn_bbox = outputs
 
 		# set proposals count for generate proposals

@@ -1,3 +1,180 @@
+# Create Dataset
+
+해당 code는 input image로부터 lungs의 mask image를 얻기 위해 서울대학병원 융합의학과 김영곤 교수님의 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)를 인용했습니다.
+
+- mask image로부터 letf, right lungs를 구분했습니다.
+- segmentation을 수행하는 Mask R-CNN의 학습을 위해 image의 meta data를 json file로 저장하도록 구현했습니다.
+
+
+
+## Find max, min coordinate of each object
+
+해당 project에서 다루는 data는 흉부의 CT사진입니다.
+
+흉부의 CT사진을 찍는 과정에서,  대상자는 기기를 바라본 방향으로 흉부를 기기에 접촉시켜야 한다는 통일된 절차가 있습니다. 이는 곧 data의 형태가 일관적이라는 것을 의미합니다.
+
+그렇기에 모든 CT image의 좌, 우는 통일되어 있으며, 이는 곧 object의 coordinate의 다양성이 크지 않다는 것이라 생각하였습니다.
+
+그래서 object의 coordinate를 기준으로 left, right lung을 분할하여 구분하도록 code를 구성했습니다. 
+
+
+
+#### Find x coordinate
+
+좌표를 통해 lung을 구분하기 위해 먼저 image를 위에서 아래로 slicing하며 각 y좌표에 대한 object의 x좌표를 구한 후, 가장 큰 x좌표와 가장 작은 x좌표를 남겼습니다.
+
+이미 object는 scipy.ndimage package의 label method에 의해 각각 고유한 number를 가지고 있기 때문에 각각의 object에 의한 x좌표의 최대, 최소가 도출됩니다.
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/3.png?raw=true)
+
+
+
+### Distinguish left, right
+
+left lung, right lung의 기준을 각 object의 x max, min coordinate가 속한 range에 따라 구별하도록 했습니다.
+
+- left lung
+
+  object의 x coordinate의 max value가 image width의 3/2를 넘어가지 않으며 x coordinate의 min value가 image width의 3/1을 넘어가지 않는 경우
+
+  ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/0.png?raw=true)
+
+- right lung
+
+  object의 x coordinate의 max value가 image width의 3/2를 넘어가고 x coordinate의 min value가 image width의 3/1을 넘어가는 경우
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/2.png?raw=true)
+
+
+
+#### Find y coordinate
+
+x좌표에 대한 object의 y좌표를 구한 후, 가장 큰 y좌표와 가장 작은 y좌표를 남기는 방식으로 object에 의한 y좌표의 최대, 최소가 도출되도록 했습니다.
+
+x min, max좌표와 y min, max좌표를 구함으로 bounding box의 top-left, bottom-right의 좌표를 알 수 있으며
+
+이를 통해 image의 meta data를 구성하고 json file로 저장합니다.
+
+
+
+## Meta data
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/1.png?raw=true)
+
+input image에 대해서 background, left lung, right lung 세 가지의 instance에 대한 data를 얻도록 했습니다.
+
+**instance information**
+
+- class_id 
+  - background : 0
+  - left lung : 1
+  - right lung : 2
+- class_name
+  - background : "background"
+  - left lung : ''left lung"
+  - right lung : "right lung"
+- bbox : 각 instance에 대한 top left, bottom right 좌표입니다.
+- height, width : 각 instance에 대한 height, width입니다.
+- mask_image : 각 instance에 대한 mask image에서 각 pixel의 value를 True, False의 boolean으로 구성한 image입니다.
+
+
+
+```python
+def meta_data_image(resized_img, mask_img_l, mask_img_r, iter, 
+				bbox_l, bbox_r, background_mask):
+
+	instance_info = [
+		{
+			"class_id": 0,
+			"class_name" : "background",
+			"bbox" : [0, 0, IMAGE_SIZE[0], IMAGE_SIZE[1] ], # y_min_l, x_min_l, y_max_l, x_max_l
+			"height" : IMAGE_SIZE[0],
+			"width" : IMAGE_SIZE[1],
+			"mask_image" : background_mask
+		},
+
+		{
+			"class_id": 1,
+			"class_name" : "left_lung",
+			"bbox" : bbox_l, # y_min_l, x_min_l, y_max_l, x_max_l
+			"height" : bbox_l[2] - bbox_l[0],
+			"width" : bbox_l[3] - bbox_l[1],
+			"mask_image" : mask_img_l
+		},
+
+		{
+			"class_id": 2,
+			"class_name" : "right_lung",
+			"bbox" : bbox_r, # y_min_r, x_min_r, y_max_r, x_max_r
+			"height" : bbox_r[2] - bbox_r[0],
+			"width" : bbox_r[3] - bbox_r[1],
+			"mask_image" : mask_img_r		
+		}
+	]
+
+	image_info = {
+			"image_id" : iter
+			"width" : IMAGE_SIZE[1],
+			"height" :	IMAGE_SIZE[0],
+			"file_name" : str(iter) + ".jpg"
+	}
+
+	image = {
+		"original_image" : resized_img
+	}
+
+	data_image = {
+			"annotation" : annotation,
+			"image" : image,
+			"image_info" : image_info
+			
+	}
+
+	return data_image
+```
+
+
+
+
+
+dataset을 json형식으로 save할 때 numpy의 dtype에 대해 읽지 못하는 issue가 있었습니다.
+
+```
+TypeError: Object of type int64 is not JSON serializable
+```
+
+이를 해결하기 위해 `NpEncoder` class를 선언했으며, Mask R-CNN에서 dataset을 load하여 활용할 때
+
+np.array()를 통해 다시 numpy의 type으로 변경해주어야 하는 과정이 필요합니다.
+
+```python
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
+```
+
+
+
+
+
+## Result
+
+input image에 대해서 lungs의 mask image와 left, right구분에 관한 결과입니다.
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/4.png?raw=true)
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/6.png?raw=true)
+
+## Full Code
+
+```python
 import segmentation_models as sm
 import glob
 import cv2
@@ -19,12 +196,12 @@ sm.set_framework('tf.keras')
 IMAGE_SIZE = (256, 256,3)	
 
 # Parameter
-path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\test_input_dataset')  
+path_base_model = os.path.join(os.getcwd() , 'make_dataset' + '\models')
+path_base_input = os.path.join(os.getcwd() , 'make_dataset' + '\\tmp')  
 
-path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result_tmp')
+path_base_result = os.path.join(os.getcwd() , 'make_dataset' + '\\result_img1')
 os.makedirs(path_base_result, exist_ok=True)  
-path_save_training_dataset = os.path.join(os.getcwd() , 'test_dataset') # instance for save of distinguish image 
+path_save_training_dataset = os.path.join(os.getcwd() , 'tmp_dataset') # instance for save of distinguish image 
 os.makedirs(path_save_training_dataset, exist_ok=True)
 
 
@@ -451,4 +628,5 @@ def main(_):
 
 if __name__ == '__main__':  
 	app.run(main)
+```
 

@@ -206,7 +206,6 @@ class TrainConfig(BaseConfig):
 	NUM_CLASSES = 3  
     
 	# 빠른 학습을 위해 작은 size의 image를 input
-	# 학습 후 성능 향상을 위해 image size을 조금씩 늘려볼것 (800~1024)
 	IMAGE_MIN_DIM = 256
 	IMAGE_MAX_DIM = 256
     
@@ -217,15 +216,16 @@ class TrainConfig(BaseConfig):
 	RPN_ANCHOR_SCALES = [16, 32, 64, 128, 256]
     
 	# 해당project의 dataset에서 ROI가 많이 필요 없음
-	TRAIN_ROIS_PER_IMAGE = 16
+	TRAIN_ROIS_PER_IMAGE = 64
 
 	LEARNING_RATE = 0.001
 
 	# train data와 validation data간의 비율
 	TRAIN_DATA_RATIO = 0.9
 
-	# anchor 적어도 충분히 detection하는데 무리 없을것임
-	RPN_TRAIN_ANCHORS_PER_IMAGE = 32
+	# anchor가 많으면 
+	# anchor 적어도 충분히 detection하는데 무리 없음
+	RPN_TRAIN_ANCHORS_PER_IMAGE = 128
 
 	
 	MAX_GT_INSTANCES = 5
