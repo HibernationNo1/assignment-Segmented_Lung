@@ -6,31 +6,38 @@
 
 - 학습에 필요한 dataset은 서울대학병원 융합의학과 김영곤 교수님의 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)를 인용하여 코드의 수정을 통해  json file로 저장하도록 했습니다.
 
-  [detail]
-
 - 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 의 동작을 이해하고 dataset에 알맞게 수정을 거쳐 설계하였습니다.
 
-  [detail]
 
 
 
 ## Description
 
-- [Create Dataset.dm] 
+- [Create_Dataset.dm](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/description/Create%20Dataset.md)
 
-  input image data로부터 Mask R-CNN을 학습시키기 위한 label을 담고 있는 dataset 만드는 code에 대한 설명입니다.
+  input image로부터 Mask R-CNN을 학습시키기 위한 label을 담고 있는 dataset 만드는 code에 대한 설명입니다.
 
-- [Training.md]
+- [Training.md](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/description/Training.md)
 
   흉부 CT dataset을 통해 Mask R-CNN의 학습을 진행하는 code에 대한 설명입니다.
 
-- [Inference.md]
+- [Inference.md](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/description/Inference.md)
 
   학습된 모델을 통해 test dataset에 대해서 inference를 진행하는 code에 대한 설명입니다.
 
-- [model.py, utils.py, config.py]
+
+
+## Code
+
+- [create_dataset.py](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/code/create_dataset/create_dataset.py)
+
+  training 및 test dataset을 만들어내는 code입니다.
+
+- [model.py](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/code/mask_rcnn/model.py), [utils.py](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/code/mask_rcnn/utils.py), [config.py](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/code/mask_rcnn/config.py)
 
   Mask R-CNN 구현한 code입니다.
+
+  
 
 
 
@@ -82,6 +89,7 @@
 | h5py             | 2.10.0  |
 | numpy            | 1.21.2  |
 | cv2              | 4.5.3   |
+| skimage          | 1.6.0   |
 
 
 
