@@ -1,4 +1,6 @@
 import os
+import cv2
+import glob
 
 import visualize
 import utils
@@ -6,13 +8,13 @@ import config
 from model import MaskRCNN
 
 inference_config = config.InferenceConfig()
-# inference_config.display()
+# inference_config.display()D
 
 
 ## set path directory
 # path of model to load weights
 model_dir = os.path.join(os.getcwd(), "model_mask-rcnn")
-# path of dataset to load
+# path of image to inference
 path_dataset = os.path.join(os.getcwd() , 'test_image')
 
 if inference_config.SAVE_RESULT:
@@ -28,9 +30,6 @@ model = MaskRCNN(mode="inference",
 # load weights
 model_path = model.find_last()
 model.load_weights(model_path, by_name=True)
-
-import cv2
-import glob
 
         
 for iter, path_ in enumerate(sorted(glob.glob (path_dataset + '\*.*'))):	
