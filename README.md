@@ -5,8 +5,10 @@
 해당 project에서는 흉부 CT사진을 데이터 삼아 좌, 우 lung을 구분하여 segmentation을 진행하는 모델을 구현했습니다.
 
 - 학습에 필요한 dataset은 서울대학병원 융합의학과 김영곤 교수님의 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)를 인용하여 코드의 수정을 통해  json file로 저장하도록 했습니다.
-
-- 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 의 동작을 이해하고 dataset에 알맞게 수정을 거쳐 설계하였습니다.
+- 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 의 code를 학습하고자 하는 dataset에 알맞도록 수정을 거쳐 설계하였습니다.
+- dataset source
+  - [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
+  - [covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
 
 
 
@@ -41,8 +43,6 @@
 
 
 
-
-
 ## Segmentation result
 
 Segmentation inference result
@@ -57,15 +57,32 @@ compare with original
 
 ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r1.png?raw=true)
 
-## Getting started
-
-[Inference.ipynb]
-
-pretrainded model을 통해 sample images에 대한 inference 결과를 확인하실 수 있습니다.
 
 
+### Model
+
+model을 학습하는데 사용한 dataset은 아래와 같습니다.
+
+**dataset** 
+
+[chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
+train\NORMAL
+
+무작위 50개의 image
+
++
+
+[covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
+train\Normal
+무작위 50개의 image
 
 
+
+총 100개의 image를 통해 dataset을 구성했습니다.
+
+
+
+[**trained model**](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/model_mask-rcnn/lungs_model/mask_rcnn__lungs_0000.h5)
 
 
 
