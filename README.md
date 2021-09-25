@@ -45,20 +45,41 @@
 
 ## Segmentation result
 
+Segmentation inference result
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r5.png?raw=true)
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r6.png?raw=true)
+
+
+
+compare with original
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r1.png?raw=true)
+
+## Getting started
+
+[Inference.ipynb]
+
+pretrainded model을 통해 sample images에 대한 inference 결과를 확인하실 수 있습니다.
+
+
+
 
 
 
 
 ## Requirements
 
-### make_dataset
+### create_dataset.py
 
 #### tools
 
-| name  | version | note             |
-| ----- | ------- | ---------------- |
-| CUDA  | 11.0    | cudart64_110.dll |
-| cuDNN | 8.2     | cudnn64_8.dll    |
+| name   | version | note             |
+| ------ | ------- | ---------------- |
+| CUDA   | 11.0    | cudart64_110.dll |
+| cuDNN  | 8.2     | cudnn64_8.dll    |
+| python | 3.8.8   |                  |
 
 #### package
 
@@ -66,19 +87,20 @@
 | ------------------- | ------- |
 | segmentation_models | 1.0.1   |
 | cv2                 | 4.5.3   |
-| scipy.ndimage       | 2.0     |
+| scipy               | 1.6.2   |
 | numpy               | 1.21.2  |
 
 
 
-### training and inference
+### Mask RCNN
 
 #### tools
 
-| name  | version | note             |
-| ----- | ------- | ---------------- |
-| CUDA  | 10.0    | cudart64_100.dll |
-| cuDNN | 7.6.4   | cudnn64_7.dll    |
+| name   | version | note             |
+| ------ | ------- | ---------------- |
+| CUDA   | 10.0    | cudart64_100.dll |
+| cuDNN  | 7.6.4   | cudnn64_7.dll    |
+| python | 3.7.11  |                  |
 
 #### package
 
@@ -87,9 +109,8 @@
 | tensorflow       | 2.0.0   |
 | tensorflow.keras | 2.2.4   |
 | h5py             | 2.10.0  |
-| numpy            | 1.21.2  |
 | cv2              | 4.5.3   |
-| skimage          | 1.6.0   |
+| skimage          | 0.16.2  |
 
 
 
