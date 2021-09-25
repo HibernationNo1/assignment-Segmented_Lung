@@ -3,7 +3,7 @@ import os
 import visualize
 import utils
 import config 
-from model import load_image_gt, MaskRCNN
+from model import MaskRCNN
 
 inference_config = config.InferenceConfig()
 # inference_config.display()
@@ -13,7 +13,7 @@ inference_config = config.InferenceConfig()
 # path of model to load weights
 model_dir = os.path.join(os.getcwd(), "model_mask-rcnn")
 # path of dataset to load
-path_dataset = os.path.join(os.getcwd(), 'test_dataset'  + '\dataset.json')
+path_dataset = os.path.join(os.getcwd() , 'test_image')
 
 if inference_config.SAVE_RESULT:
 	path_result = os.path.join(os.getcwd() , 'result_inference')
@@ -29,13 +29,16 @@ model = MaskRCNN(mode="inference",
 model_path = model.find_last()
 model.load_weights(model_path, by_name=True)
 
-dataset_test, _ = utils.load_dataset(inference_config.TRAIN_DATA_RATIO, path_dataset)
+import cv2
+import glob
 
-for i in range(len(dataset_test)):
-	image_id = i
-	data_image = dataset_test[image_id]
+        
+for iter, path_ in enumerate(sorted(glob.glob (path_dataset + '\*.*'))):	
+	title = path_.split("\\")[-1]
+	original_image = cv2.imread(path_)	# <class 'numpy.ndarray'>
+	original_image = utils.preprocessing_HE(original_image)
+	print(f"file name : {title}")
 
-	original_image, _ ,  _, _, _ = load_image_gt(data_image, image_id, inference_config)
 
 	# results = ["rois" : [num_rois, (y1, x1, y2, x2)], 
 	#			 "class_ids" : [num_rois]
@@ -45,12 +48,7 @@ for i in range(len(dataset_test)):
 
 
 	r = results[0]
-	title = data_image["image_info"]["file_name"]
-	class_names = list()
-	for annotation in dataset_test[image_id]["annotation"]:
-		class_names.append(annotation["class_name"])
-	# class_names = ["background", "left_lung", "right_lung"]
-
-	visualize.display_instances(original_image, r['rois'], r['masks'], r['class_ids'], 
-								class_names, r['scores'], title, 
+	visualize.display_instances(original_image, 
+								r['rois'], r['masks'], r['class_ids'], r['scores'], 
+								title, 
 								save = inference_config.SAVE_RESULT, path = path_result)

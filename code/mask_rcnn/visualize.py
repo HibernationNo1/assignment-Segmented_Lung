@@ -32,12 +32,13 @@ def apply_mask(image, mask, color, alpha=0.5):
 	return image
 
 
-def display_instances(image, boxes, masks, class_ids, class_names, scores=None,
+def display_instances(image, boxes, masks, class_ids, scores=None,
 					  title = " ", figsize = (15, 15), save = False, path = None):
+	class_names = ["background", "left lung", "right lung"]
 	N = boxes.shape[0]
 
 	if not N:
-		print("\n*** No instances to display *** \n")
+		print("*** No instances to display ***")
 	else:
 		assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
 	
@@ -63,7 +64,15 @@ def display_instances(image, boxes, masks, class_ids, class_names, scores=None,
 	ax[1].set_title('Result image', fontsize = 30)
 
 
-
+	if height < 512 : 
+		thickness = 1
+		y_text_loc = 2
+	elif 512 <= height and  height < 1024 : 
+		thickness = 2
+		y_text_loc = 4
+	elif 1024 <= height :
+		thickness = 3
+		y_text_loc = 7
 	# 받아온 image는 scalar임
 	masked_image = np.array(image, dtype = np.uint8).copy()
 	for i in range(N):
@@ -73,7 +82,8 @@ def display_instances(image, boxes, masks, class_ids, class_names, scores=None,
 
 		# Bbox
 		y1, x1, y2, x2 = boxes[i]
-		cv2.rectangle(masked_image, (x1, y1), (x2, y2), color_cv2, 1)
+		
+		cv2.rectangle(masked_image, (x1, y1), (x2, y2), color_cv2, thickness)
 		
 		# put class name, score
 		class_id = class_ids[i]
@@ -81,11 +91,10 @@ def display_instances(image, boxes, masks, class_ids, class_names, scores=None,
 		label = class_names[class_id]
 
 		text = label + " " + str(f"{score:.3f}")
-		bottomLeftCornerOfText = (x1, y2+7)
+		bottomLeftCornerOfText = (x1, y1-y_text_loc)
 		font = cv2.FONT_HERSHEY_SIMPLEX
-		fontScale = 0.3
+		fontScale = height/1000
 		fontColor = color_cv2
-		thickness = 1
 		lineType = cv2.LINE_AA
 		
 		cv2.putText(masked_image, text,
@@ -116,6 +125,7 @@ def display_instances(image, boxes, masks, class_ids, class_names, scores=None,
 
 	if save and os.path.exists(path):
 		plt.savefig(path + '/' + title.split('.')[0] +  '.png')
+		print(f"{title.split('.')[0]} saved successfully. \n")
 	elif not save:
 		plt.show()
 	plt.close()
