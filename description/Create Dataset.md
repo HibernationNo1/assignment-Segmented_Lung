@@ -37,11 +37,13 @@ left lung, right lung의 기준을 각 object의 x max, min coordinate가 속한
 
   object의 x coordinate의 max value가 image width의 3/2를 넘어가지 않으며 x coordinate의 min value가 image width의 3/1을 넘어가지 않는 경우
 
-  ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/0.png?raw=true)
-
 - right lung
 
   object의 x coordinate의 max value가 image width의 3/2를 넘어가고 x coordinate의 min value가 image width의 3/1을 넘어가는 경우
+  
+  ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/0.png?raw=true)
+
+위의 기준으로 left, right구분을 하여 color를 통해 표현해보면 아래와 같습니다.
 
 ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/2.png?raw=true)
 
@@ -49,7 +51,11 @@ left lung, right lung의 기준을 각 object의 x max, min coordinate가 속한
 
 #### Find y coordinate
 
-x좌표에 대한 object의 y좌표를 구한 후, 가장 큰 y좌표와 가장 작은 y좌표를 남기는 방식으로 object에 의한 y좌표의 최대, 최소가 도출되도록 했습니다.
+x좌표를 구하는 방식과 동일합니다.
+
+image를 `y = -x + height` 직선을 기준으로 대칭이동 한 후 object의 y좌표를 구하여 가장 큰 y좌표와 가장 작은 y좌표를 남기는 방식으로 object에 의한 y좌표의 최대, 최소가 도출되도록 했습니다.
+
+
 
 x min, max좌표와 y min, max좌표를 구함으로 bounding box의 top-left, bottom-right의 좌표를 알 수 있으며
 
@@ -61,7 +67,9 @@ x min, max좌표와 y min, max좌표를 구함으로 bounding box의 top-left, b
 
 ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/1.png?raw=true)
 
-input image에 대해서 background, left lung, right lung 세 가지의 instance에 대한 data를 얻도록 했습니다.
+input image에 대해서 image informaion, original image, instance information에 대한 값을 계산했습니다.
+
+instance information은 background, left lung, right lung 세 가지의 instance에 대한 data를 얻도록 했습니다.
 
 **instance information**
 
@@ -137,28 +145,29 @@ def meta_data_image(resized_img, mask_img_l, mask_img_r, iter,
 
 
 
-dataset을 json형식으로 save할 때 numpy의 dtype에 대해 읽지 못하는 issue가 있었습니다.
-
-```
-TypeError: Object of type int64 is not JSON serializable
-```
-
-이를 해결하기 위해 `NpEncoder` class를 선언했으며, Mask R-CNN에서 dataset을 load하여 활용할 때
-
-np.array()를 통해 다시 numpy의 type으로 변경해주어야 하는 과정이 필요합니다.
-
-```python
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        else:
-            return super(NpEncoder, self).default(obj)
-```
+> dataset을 json형식으로 save할 때 numpy의 dtype에 대해 읽지 못하는 issue가 있었습니다.
+>
+> ```
+> TypeError: Object of type int64 is not JSON serializable
+> ```
+>
+> 이를 해결하기 위해 `NpEncoder` class를 선언했으며, Mask R-CNN에서 dataset을 load하여 활용할 때
+>
+> np.array()를 통해 다시 numpy의 type으로 변경해주어야 하는 과정이 필요합니다.
+>
+> ```python
+> class NpEncoder(json.JSONEncoder):
+>     def default(self, obj):
+>         if isinstance(obj, np.integer):
+>             return int(obj)
+>         elif isinstance(obj, np.floating):
+>             return float(obj)
+>         elif isinstance(obj, np.ndarray):
+>             return obj.tolist()
+>         else:
+>             return super(NpEncoder, self).default(obj)
+> ```
+>
 
 
 
@@ -196,12 +205,12 @@ sm.set_framework('tf.keras')
 IMAGE_SIZE = (256, 256,3)	
 
 # Parameter
-path_base_model = os.path.join(os.getcwd() , 'make_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'make_dataset' + '\\tmp')  
+path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
+path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\test_input_dataset')  
 
-path_base_result = os.path.join(os.getcwd() , 'make_dataset' + '\\result_img1')
+path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result_tmp')
 os.makedirs(path_base_result, exist_ok=True)  
-path_save_training_dataset = os.path.join(os.getcwd() , 'tmp_dataset') # instance for save of distinguish image 
+path_save_training_dataset = os.path.join(os.getcwd() , 'test_dataset') # instance for save of distinguish image 
 os.makedirs(path_save_training_dataset, exist_ok=True)
 
 
