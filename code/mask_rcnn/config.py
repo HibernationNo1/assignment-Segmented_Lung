@@ -214,6 +214,7 @@ class TrainConfig(BaseConfig):
 	# input image가 작기 때문에 anchor size도 작은걸로 사용 
 	# 해당 project의 object 크기는 128을 넘어가지 않음
 	RPN_ANCHOR_SCALES = [16, 32, 64, 128, 256]
+	# RPN_ANCHOR_SCALES = [32, 64, 128, 256, 512]
     
 	# 해당project의 dataset에서 ROI가 많이 필요 없음
 	TRAIN_ROIS_PER_IMAGE = 64

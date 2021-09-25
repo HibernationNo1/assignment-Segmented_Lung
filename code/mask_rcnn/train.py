@@ -25,15 +25,15 @@ dataset_train, dataset_validation = utils.load_dataset(trainig_config.TRAIN_DATA
 model = MaskRCNN(mode="training", config = trainig_config, model_dir = model_dir)
 
 
-model.train(dataset_train, dataset_validation, 
- 			learning_rate=trainig_config.LEARNING_RATE / 5,
- 			epochs= 5, 
- 			layers="all")
-
 #model.train(dataset_train, dataset_validation, 
-#			learning_rate=trainig_config.LEARNING_RATE, 
-#			epochs= 15, 
-#			layers='heads') 
+# 			learning_rate=trainig_config.LEARNING_RATE / 5,
+# 			epochs= 15, 
+# 			layers="all")
+
+model.train(dataset_train, dataset_validation, 
+			learning_rate=trainig_config.LEARNING_RATE, 
+			epochs= 7, 
+			layers='heads') 
 
 print("training 완료!!")
 
