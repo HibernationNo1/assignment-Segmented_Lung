@@ -183,6 +183,12 @@ input image에 대해서 lungs의 mask image와 left, right구분에 관한 결�
 
 ## Full Code
 
+해당 code는 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)의 [Example_LungSegmentation.ipynb](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19/blob/master/Example_LungSegmentation.ipynb)을 수정하여 구현하였으며
+
+사용된 모델은 pre trained [Research-Segmentation-Lung-CXR-COVID19/models/](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19/tree/master/models) 입니다.
+
+
+
 ```python
 import segmentation_models as sm
 import glob
@@ -206,11 +212,11 @@ IMAGE_SIZE = (256, 256,3)
 
 # Parameter
 path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\test_input_dataset')  
+path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\sample_image')  
 
-path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result_tmp')
+path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result')
 os.makedirs(path_base_result, exist_ok=True)  
-path_save_training_dataset = os.path.join(os.getcwd() , 'test_dataset') # instance for save of distinguish image 
+path_save_training_dataset = os.path.join(os.getcwd() , 'training_dataset') # instance for save of distinguish image 
 os.makedirs(path_save_training_dataset, exist_ok=True)
 
 
@@ -529,7 +535,7 @@ def meta_data_image(resized_img, mask_img_l, mask_img_r, iter,
 	}
 
 	data_image = {
-			"annotation" : instance_info,
+			"instance_info" : instance_info,
 			"image" : image,
 			"image_info" : image_info
 			
