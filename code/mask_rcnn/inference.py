@@ -15,7 +15,7 @@ inference_config = config.InferenceConfig()
 # path of model to load weights
 model_dir = os.path.join(os.getcwd(), "model_mask-rcnn")
 # path of image to inference
-path_dataset = os.path.join(os.getcwd() , 'test_image')
+path_dataset = os.path.join(os.getcwd() , 'sample_test_image')
 
 if inference_config.SAVE_RESULT:
 	path_result = os.path.join(os.getcwd() , 'result_inference')
