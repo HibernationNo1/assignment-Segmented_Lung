@@ -1424,20 +1424,22 @@ def load_image_gt(data_image, image_id, config):
 	image = data_image["image"]["original_image"]  	# (256, 256, 3)
 	# 받아온 image는 list type임 (json저장할 때 numpy로 저장 안돼서 list로 바꾼 상태)
 	image = np.array(image)
+	# pre-proseeing : Histogram Equalization
+	image = utils.preprocessing_HE(image)
 
 	## mask, class_ids
 	mask_list = list()
 	class_ids = list()
-	instance_count = len(data_image["annotation"])
+	instance_count = len(data_image["instance_info"])
 	for i in range(instance_count) :
-		mask = np.array(data_image["annotation"][i]["mask_image"])
+		mask = np.array(data_image["instance_info"][i]["mask_image"])
 		# mask.shape = (height, width, 1)
 		mask_list.append(mask)
-		class_ids.append(data_image["annotation"][i]["class_id"])
+		class_ids.append(data_image["instance_info"][i]["class_id"])
 	class_ids = np.array(class_ids)	
 	
 	# mask.shape = (height, width, instance_count)
-	mask = np.dstack([mask_list[j] for j in range(len(data_image["annotation"]))])
+	mask = np.dstack([mask_list[j] for j in range(len(data_image["instance_info"]))])
 	
 	# class_ids.shape = (instance_count, )  value =  [0, 1]
 
@@ -1472,12 +1474,12 @@ def load_image_gt(data_image, image_id, config):
 	bbox_list = list()
 	for i in range(instance_count) :
 		# bbox.shape = (1, (y1, x1, y2, x2))
-		bbox = np.array([data_image["annotation"][i]["bbox"]])
+		bbox = np.array([data_image["instance_info"][i]["bbox"]])
 		bbox_list.append(bbox)
 
 	# bbox.shape = (num_instances, 4),	  4: (y1, x1, y2, x2)
 	bbox = np.vstack([bbox_list[j] for j in 
-					  range(len(data_image["annotation"]))]).astype(np.int32)
+					  range(len(data_image["instance_info"]))]).astype(np.int32)
 
 	## Active classes
 	# class의 개수 중 실제 dataset에서 사용되는 class에는 1을 할당
@@ -1685,13 +1687,13 @@ class DataGenerator(KU.Sequence):
 			# Increment index to pick next image.	
 			image_index = (image_index + 1) % len(self.image_ids)
 
-			# self.dataset : [["annotation", "image], ["annotation", "image]... 
+			# self.dataset : [["instance_info", "image], ["instance_info", "image]... 
 			# 의 형태이기 때문에 1장의 image에 대한 data만 extract
 			data_image = self.dataset[image_index]
 
 			# Shuffle if at the start of an epoch
-			if self.shuffle and image_index == 0:
-				np.random.shuffle(self.image_ids)
+			#if self.shuffle and image_index == 0:
+			#	np.random.shuffle(self.image_ids)
 
 			# 현재 image index
 			image_id = self.image_ids[image_index]
@@ -2361,10 +2363,11 @@ class MaskRCNN():
 			# Resize image
 			molded_image, window, scale, padding, crop = utils.resize_image(
 				image,
+				mode=self.config.IMAGE_RESIZE_MODE,
 				min_dim=self.config.IMAGE_MIN_DIM,
-				min_scale=self.config.IMAGE_MIN_SCALE,
 				max_dim=self.config.IMAGE_MAX_DIM,
-				mode=self.config.IMAGE_RESIZE_MODE)
+				min_scale=self.config.IMAGE_MIN_SCALE
+				)
 			molded_image = mold_image(molded_image, self.config)
 			# Build image_meta
 			image_meta = utils.compose_image_meta(
@@ -2475,7 +2478,7 @@ class MaskRCNN():
 		if verbose:
 			print(f"Processing {len(images)} images")
 			for image in images:
-				print(f"image shape : {image.shape}")
+				print(f"input image shape : {image.shape}")
 
 		# Mold inputs to format expected by the neural network
 		# molded_images.shape = (BATCH_SIZE, height, width, 3)

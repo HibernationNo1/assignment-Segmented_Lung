@@ -11,6 +11,16 @@ import json
 
 from distutils.version import LooseVersion
 
+def preprocessing_HE(img_):
+    hist, _ = np.histogram(img_.flatten(), 256,[0,256])		# histogram
+    cdf = hist.cumsum()										# 누적합
+    cdf_m = np.ma.masked_equal(cdf,0)						# 0인 element는 mask처리
+    cdf_m = (cdf_m - cdf_m.min())*255/(cdf_m.max()-cdf_m.min()) # Histogram equalization
+    cdf = np.ma.filled(cdf_m,0).astype('uint8')				# np.ma.masked_equal로 인해 mask처리된 element를 0으로 
+    img_2 = cdf[img_]										# original image에 historam적용
+    
+    return img_2  
+
 def resize(image, output_shape, order=1, mode='constant', cval=0, clip=True,
            preserve_range=False, anti_aliasing=False, anti_aliasing_sigma=None):
     """A wrapper for Scikit-Image resize().
@@ -19,6 +29,7 @@ def resize(image, output_shape, order=1, mode='constant', cval=0, clip=True,
     of skimage. This solves the problem by using different parameters per
     version. And it provides a central place to control resizing defaults.
     """
+
     if LooseVersion(skimage.__version__) >= LooseVersion("0.14"):
         # New in 0.14: anti_aliasing. Default it to False for backward
         # compatibility with skimage 0.13.
@@ -32,6 +43,7 @@ def resize(image, output_shape, order=1, mode='constant', cval=0, clip=True,
             image, output_shape,
             order=order, mode=mode, cval=cval, clip=clip,
             preserve_range=preserve_range)
+	
 
 
 def unmold_mask(mask, bbox, image_shape):
@@ -388,8 +400,8 @@ def mold_image(images, config):
 
 def resize_image(image, mode = None, min_dim=None, max_dim=None, min_scale=None):
 	"""
-	min_dim : image를 줄이기를 결정했을 때 사용. 최소값 800.  사용될 data에는 해당안됨
-	max_dim : image를 늘리기를 결정했을 때 사용. 최대값 1024
+	min_dim : image를 줄이기를 결정했을 때 사용. 
+	max_dim : image를 늘리기를 결정했을 때 사용. 
 	min_scale : if provided, image가 min_scale의 비율로 확대되는지 확인
 
 	Returns:
@@ -402,7 +414,7 @@ def resize_image(image, mode = None, min_dim=None, max_dim=None, min_scale=None)
 	"""
 	# Keep track of image dtype and return results in the same dtype
 	image_dtype = image.dtype
-    
+
 	# Default window (y1, x1, y2, x2) and default scale == 1.
 	h, w = image.shape[:2]
 	window = (0, 0, h, w)
@@ -420,12 +432,20 @@ def resize_image(image, mode = None, min_dim=None, max_dim=None, min_scale=None)
 		scale = max(1, min_dim / min(h, w))
 	if min_scale and scale < min_scale:
 		scale = min_scale
+	
+	
     
-	# input image가 square이 아닌 경우 square로 resize할 때 scale조정. (사용될 data에는 해당안됨)
+	# input image가 square이 아닌 경우 square로 resize할 때 scale조정.
 	if max_dim and mode == "square": 
 		image_max = max(h, w)
 		if round(image_max * scale) > max_dim:
 			scale = max_dim / image_max
+
+
+	if scale != 1:
+		image = resize(image, (round(h * scale), round(w * scale)),
+					preserve_range=True)
+
 
 	if mode == "square":
 		# Get new height and width
