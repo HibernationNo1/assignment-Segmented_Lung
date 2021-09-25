@@ -20,11 +20,11 @@ IMAGE_SIZE = (256, 256,3)
 
 # Parameter
 path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\test_input_dataset')  
+path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\input_images')  
 
-path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result_tmp')
+path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result')
 os.makedirs(path_base_result, exist_ok=True)  
-path_save_training_dataset = os.path.join(os.getcwd() , 'test_dataset') # instance for save of distinguish image 
+path_save_training_dataset = os.path.join(os.getcwd() , 'training_dataset') # instance for save of distinguish image 
 os.makedirs(path_save_training_dataset, exist_ok=True)
 
 
@@ -343,7 +343,7 @@ def meta_data_image(resized_img, mask_img_l, mask_img_r, iter,
 	}
 
 	data_image = {
-			"annotation" : instance_info,
+			"instance_info" : instance_info,
 			"image" : image,
 			"image_info" : image_info
 			
