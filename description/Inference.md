@@ -1,5 +1,9 @@
 # Inference
 
+png 또는 jpg 형식의 file을 input으로 받은 후 trained model에 의한 segmentation을 진행한 후 결과에 대해 window로 출력 또는 png 형식의 file로 save하는 code입니다.
+
+
+
 ### import
 
 ```python

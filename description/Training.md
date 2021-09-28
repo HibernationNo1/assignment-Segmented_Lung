@@ -56,14 +56,12 @@ class TrainConfig(config.BaseConfig):
 	NUM_CLASSES = 3  
     
 	# 빠른 학습을 위해 작은 size의 image를 input
-	# 학습 후 성능 향상을 위해 image size을 조금씩 늘려볼것 (800~1024)
 	IMAGE_MIN_DIM = 256
 	IMAGE_MAX_DIM = 256
     
 	USE_MINI_MASK = False
 
 	# input image가 작기 때문에 anchor size도 작은걸로 사용 
-	# 해당 project의 object 크기는 128을 넘어가지 않음
 	RPN_ANCHOR_SCALES = [16, 32, 64, 128, 256]
     
 	# 해당project의 dataset에서 ROI가 많이 필요 없음
@@ -107,6 +105,18 @@ dataset_train, dataset_validation = utils.load_dataset(trainig_config.TRAIN_DATA
 ```python
 model = MaskRCNN(mode="training", config = trainig_config, model_dir = model_dir)
 ```
+
+
+
+>**load trained model**
+>
+>```python
+>model.load_weights(model.find_last(), by_name=True)
+>```
+>
+>이전에 학습했던 model 중 가장 마지막 model의 wieght를 가져와서 이어서 학습할 경우
+>
+>model instance 선언 후 load_weights를 호출한다.
 
 
 
@@ -451,6 +461,7 @@ model.train(dataset_train, dataset_validation,
 			epochs= 5, 
 			layers='heads') 
 
+# model.load_weights(model.find_last(), by_name=True)
 # model.train(dataset_train, dataset_validation, 
 # 			learning_rate=trainig_config.LEARNING_RATE / 5,
 # 			epochs= 7, 
