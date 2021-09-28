@@ -2341,6 +2341,12 @@ class MaskRCNN():
 			use_multiprocessing=True )
 		
 		self.epoch = max(self.epoch, epochs)
+		new_checkpoint_path = os.path.join(self.log_dir, 
+							   "mask_rcnn_"  
+							   + f"_{self.config.NAME.lower()}_"
+							   + f"{self.epoch:04d}.h5")
+		os.rename(self.checkpoint_path, new_checkpoint_path)
+
 
 
 	def mold_inputs(self, images):

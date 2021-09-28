@@ -191,8 +191,8 @@ class TrainConfig(BaseConfig):
 	NAME = "lungs"
     
 	
-	STEPS_PER_EPOCH = 300
-	VALIDATION_STEPS = 200
+	STEPS_PER_EPOCH = 50
+	VALIDATION_STEPS = 70
 
 	POST_NMS_ROIS_TRAINING = 500
 	POST_NMS_ROIS_INFERENCE = 250
@@ -212,7 +212,6 @@ class TrainConfig(BaseConfig):
 	USE_MINI_MASK = False
 
 	# input image가 작기 때문에 anchor size도 작은걸로 사용 
-	# 해당 project의 object 크기는 128을 넘어가지 않음
 	RPN_ANCHOR_SCALES = [16, 32, 64, 128, 256]
 	# RPN_ANCHOR_SCALES = [32, 64, 128, 256, 512]
     

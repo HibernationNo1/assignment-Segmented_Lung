@@ -20,7 +20,7 @@ IMAGE_SIZE = (256, 256,3)
 
 # Parameter
 path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\sample_image')  
+path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\tmp_images')  
 
 path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result')
 os.makedirs(path_base_result, exist_ok=True)  

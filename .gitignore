@@ -15,5 +15,7 @@ test_dataset/
 training_dataset/
 result_inference/
 
+
+model_mask-rcnn/
 *.txt
 *.json
