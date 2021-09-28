@@ -2,13 +2,21 @@
 
 서울대학병원 융합의학과 김영곤 교수님의 과제 수행 repository입니다.
 
-흉부 CT image로부터 letf, right lung을 구분하여 segmentation을 진행하는 모델을 구현했습니다.
+흉부 CT image로부터 letf, right lung을 구분하여 segmentation을 진행하는 모델을 구현하는 project입니다.
+
+1. pre trained model을 통해 흉부 CT image로부터 좌, 우 구분 없는 lung mask에 대한 data를 확보합니다.
+2. 확보한 data로부터 좌, 우 lung의 구분을 진행하여 새로운 dataset을 만들어 json형식의 file로 저장합니다.
+3. json file을 load하여 좌, 우 lung의 구분이 가능한 segmentation 학습을 진행할 수 있도록 Mask R-CNN model을 설계합니다.
+
+
 
 - 학습에 필요한 dataset은 서울대학병원 융합의학과 김영곤 교수님의 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)를 인용하여 코드의 수정을 통해  json file로 저장하도록 했습니다.
 - 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 로부터 수정을 통해 학습하고자 하는 dataset에 알맞도록 구현하였습니다.
 - training, test dataset source
   - [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
   - [covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
+
+
 
 
 
