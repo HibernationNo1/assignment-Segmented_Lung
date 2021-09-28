@@ -2,11 +2,11 @@
 
 서울대학병원 융합의학과 김영곤 교수님의 과제 수행 repository입니다.
 
-해당 project에서는 흉부 CT사진을 데이터 삼아 좌, 우 lung을 구분하여 segmentation을 진행하는 모델을 구현했습니다.
+흉부 CT image로부터 letf, right lung을 구분하여 segmentation을 진행하는 모델을 구현했습니다.
 
 - 학습에 필요한 dataset은 서울대학병원 융합의학과 김영곤 교수님의 [Research-Segmentation-Lung](https://github.com/younggon2/Research-Segmentation-Lung-CXR-COVID19)를 인용하여 코드의 수정을 통해  json file로 저장하도록 했습니다.
-- 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 의 code를 학습하고자 하는 dataset에 알맞도록 수정을 거쳐 설계하였습니다.
-- dataset source
+- 학습을 진행하는 model은  https://github.com/akTwelve/Mask_RCNN 로부터 수정을 통해 학습하고자 하는 dataset에 알맞도록 구현하였습니다.
+- training, test dataset source
   - [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
   - [covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
 
@@ -57,6 +57,16 @@ compare with original
 
 ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r1.png?raw=true)
 
+### Loss
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/loss.png?raw=true)
+
+
+
+
+
+![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/loss_1.png?raw=true)
+
 
 
 ### Model
@@ -66,23 +76,27 @@ model을 학습하는데 사용한 dataset은 아래와 같습니다.
 **dataset** 
 
 [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
+
 train\NORMAL
 
 무작위 50개의 image
 
-+
+\+
 
 [covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
+
 train\Normal
 무작위 50개의 image
-
-
 
 총 100개의 image를 통해 dataset을 구성했습니다.
 
 
 
 [**trained model**](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/model_mask-rcnn/lungs_model/mask_rcnn__lungs_0000.h5)
+
+> 해당 model과 sample test image을 통해 바로 segmentation을 진행할 수 있는 code를 ipynb file로 업로드 하기 위해 version문제를 해결하고 있습니다.
+
+
 
 
 
