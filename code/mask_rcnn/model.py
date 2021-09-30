@@ -1424,8 +1424,10 @@ def load_image_gt(data_image, image_id, config):
 	image = data_image["image"]["original_image"]  	# (256, 256, 3)
 	# 받아온 image는 list type임 (json저장할 때 numpy로 저장 안돼서 list로 바꾼 상태)
 	image = np.array(image)
-	# pre-proseeing : Histogram Equalization
-	image = utils.preprocessing_HE(image)
+
+	# pre-proseeing : 
+	image = utils.preprocessing_sub_ND(image)
+
 
 	## mask, class_ids
 	mask_list = list()
@@ -2045,37 +2047,50 @@ class MaskRCNN():
 
 
 
-	def find_last(self):
+	def find_last(self, file_name = None):
 		"""Finds the last checkpoint file of the last trained model in the
 		model directory.
+
+		file_name : 지목한 trained model name (when find specific model)
 		Returns:
 			The path of the last checkpoint file
 		"""
 		# Get directory names. Each directory corresponds to a model
 		dir_names = next(os.walk(self.model_dir))[1]	# dir_names = list_dir
 		key = self.config.NAME.lower()	# lungs
-		dir_names = filter(lambda f: f.startswith(key), dir_names)
-		dir_names = sorted(dir_names)	# lungs 이 포함된 directory
+
+		if file_name == None : 	
+			dir_names = filter(lambda f: f.startswith(key), dir_names)
+			dir_names = sorted(dir_names)	# lungs 이 포함된 directory
+		else : 	# 지목한 trained model이 있는 경우
+			# key = lungs, 		file_name = _1
+			dir_names = str(key) + str(file_name)
+
 		if not dir_names:
 			import errno
 			raise FileNotFoundError(
 				errno.ENOENT,
 				"Could not find model directory under {}".format(self.model_dir))
 		
+		if file_name == None : 
 		# Pick last directory
-		dir_name = os.path.join(self.model_dir, dir_names[-1])
+			dir_name = os.path.join(self.model_dir, dir_names[-1])
+		else :
+			dir_name = os.path.join(self.model_dir, dir_names) 	
 		
+
 		# Find the last checkpoint
 		# checkpoint file만 추려냄
 		checkpoints = next(os.walk(dir_name))[2] 
 
 		checkpoints = filter(lambda f: f.startswith("mask_rcnn"), checkpoints)
 		checkpoints = sorted(checkpoints)
-
+		
 		if not checkpoints:
 			import errno
 			raise FileNotFoundError(
 				errno.ENOENT, "Could not find weight files in {}".format(dir_name))
+		# 가장 마지막 checkpoint
 		checkpoint = os.path.join(dir_name, checkpoints[-1])
 		return checkpoint
 

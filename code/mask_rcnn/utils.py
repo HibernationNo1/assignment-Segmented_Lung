@@ -11,6 +11,20 @@ import json
 
 from distutils.version import LooseVersion
 
+def preprocessing_sub_ND(img_):
+	mu = 0.5
+	sigma = 0.35
+	distri_img = img_.copy()
+
+	x = distri_img[distri_img < 0.6].copy()
+	y = (1 / np.sqrt(2 * np.pi * sigma**2)) * np.exp(-(x-mu)**2 / (2 * sigma**2))	
+	distri_img[distri_img < 0.6] = distri_img[distri_img < 0.6] -  y/6
+	
+	#x = distri_img[distri_img >= 0.7].copy()
+	#y = (1 / np.sqrt(2 * np.pi * sigma**2)) * np.exp(-(x-mu)**2 / (2 * sigma**2))	
+	#distri_img[distri_img >= 0.8] = distri_img[distri_img >= 0.8] +  y/9
+	return distri_img
+
 def preprocessing_HE(img_):
     hist, _ = np.histogram(img_.flatten(), 256,[0,256])		# histogram
     cdf = hist.cumsum()										# 누적합
