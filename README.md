@@ -81,22 +81,22 @@ compare with original
 
 model을 학습하는데 사용한 dataset은 아래와 같습니다.
 
-**dataset** 
+['Covid-19 Image Dataset'](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
 
-[chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
-
-train\NORMAL
-
-무작위 50개의 image
+70개의 image
 
 \+
 
-[covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
+['Chest X-Ray Images'](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
+300개의 image
 
-train\Normal
-무작위 50개의 image
+\+
 
-총 100개의 image를 통해 dataset을 구성했습니다.
+['Covid Patients Chest X-Ray'](https://www.kaggle.com/ankitachoudhury01/covid-patients-chest-xray)
+
+147개의 image
+
+총 547개의 image를 사용해 training dataset을 구성했습니다.
 
 
 
