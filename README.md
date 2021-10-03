@@ -55,17 +55,17 @@
 
 Segmentation inference result
 
-![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r5.png?raw=true)
+![](https://github.com/HibernationNo1/segmentation_lungs/blob/master/image/r_1.png?raw=true)
 
-![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r6.png?raw=true)
+![](https://github.com/HibernationNo1/segmentation_lungs/blob/master/image/r_2.png?raw=true)
 
 
 
-compare with original
 
-![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r1.png?raw=true)
 
 ### Loss
+
+loss는 tenserboard를 사용해 시각화 했습니다.
 
 ![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/loss.png?raw=true)
 
@@ -101,6 +101,18 @@ model을 학습하는데 사용한 dataset은 아래와 같습니다.
 
 
 [**trained model**](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/model_mask-rcnn/lungs_model/mask_rcnn__lungs_0000.h5)
+
+총 69개의 test image중
+
+- 94%의 비율로(65개) left, right lung을 성공적으로 detection하고,  위 result image의 수준으로 segmentation을 진행함을 확인했습니다.
+
+-  4% 의 비율로 (4개) left, right lung 중 1개의 instance를 detection하고 segmentation을 진행함을 확인했습니다.
+
+  ![](https://github.com/HibernationNo1/segmentation_lungs/blob/master/image/r_3.png?raw=true)
+
+- 1.4%의 비율로(1개) object detection에 실패함을 확인했습니다. 
+
+  > inference과정에서 input image에 preprocessing을 적용하여 성공확률 높히기
 
 > 해당 model과 sample test image을 통해 바로 segmentation을 진행할 수 있는 code를 ipynb file로 업로드 하기 위해 version문제를 해결하고 있습니다.
 
