@@ -11,6 +11,7 @@ import json
 
 from distutils.version import LooseVersion
 
+# image의 lung부분의 pixel값에 normal distribution값 만큼을 빼는 preprocessing
 def preprocessing_sub_ND(img_):
 	mu = 0.5
 	sigma = 0.35
@@ -19,10 +20,7 @@ def preprocessing_sub_ND(img_):
 	x = distri_img[distri_img < 0.6].copy()
 	y = (1 / np.sqrt(2 * np.pi * sigma**2)) * np.exp(-(x-mu)**2 / (2 * sigma**2))	
 	distri_img[distri_img < 0.6] = distri_img[distri_img < 0.6] -  y/6
-	
-	#x = distri_img[distri_img >= 0.7].copy()
-	#y = (1 / np.sqrt(2 * np.pi * sigma**2)) * np.exp(-(x-mu)**2 / (2 * sigma**2))	
-	#distri_img[distri_img >= 0.8] = distri_img[distri_img >= 0.8] +  y/9
+
 	return distri_img
 
 def preprocessing_HE(img_):
