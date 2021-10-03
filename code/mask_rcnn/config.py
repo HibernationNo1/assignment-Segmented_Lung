@@ -191,14 +191,15 @@ class TrainConfig(BaseConfig):
 	NAME = "lungs"
     
 	
-	STEPS_PER_EPOCH = 50
-	VALIDATION_STEPS = 70
+	STEPS_PER_EPOCH = 500
+	VALIDATION_STEPS = 300
 
 	POST_NMS_ROIS_TRAINING = 500
 	POST_NMS_ROIS_INFERENCE = 250
     
 	# 해당 poject의 dataset은 data의 개수가 적기 때문에 batch_size = 2로 맞춰본다.
 	#   + 해당 poject 진행자는 3GB GPU 사용중
+	# IMAGES_PER_GPU = 8 이상에선 이슈 발생
 	IMAGES_PER_GPU = 2
 	GPU_COUNT = 1
     

@@ -34,7 +34,7 @@ model = MaskRCNN(mode="training", config = trainig_config, model_dir = model_dir
 model.load_weights(model.find_last(), by_name=True)
 model.train(dataset_train, dataset_validation, 
 			learning_rate=trainig_config.LEARNING_RATE, 
-			epochs= 3, 
+			epochs= 5, 
 			layers='heads') 
 
 print("training 완료!!")
