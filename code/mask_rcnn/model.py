@@ -1425,9 +1425,6 @@ def load_image_gt(data_image, image_id, config):
 	# 받아온 image는 list type임 (json저장할 때 numpy로 저장 안돼서 list로 바꾼 상태)
 	image = np.array(image)
 
-	# pre-proseeing : 
-	image = utils.preprocessing_sub_ND(image)
-
 
 	## mask, class_ids
 	mask_list = list()
@@ -1682,23 +1679,20 @@ class DataGenerator(KU.Sequence):
 		"""
 		
 		batch_item_index = 0  # batch item inde
-		image_index = -1
+		index = -1
 
 		while batch_item_index < self.batch_size:
-			
+			# Shuffle if at the start of an epoch
+			if self.shuffle and index == 0:
+				np.random.shuffle(self.image_ids)
+			 
 			# Increment index to pick next image.	
-			image_index = (image_index + 1) % len(self.image_ids)
+			index = (index + 1) % len(self.image_ids)
+			image_id = self.image_ids[index]
 
 			# self.dataset : [["instance_info", "image], ["instance_info", "image]... 
 			# 의 형태이기 때문에 1장의 image에 대한 data만 extract
-			data_image = self.dataset[image_index]
-
-			# Shuffle if at the start of an epoch
-			#if self.shuffle and image_index == 0:
-			#	np.random.shuffle(self.image_ids)
-
-			# 현재 image index
-			image_id = self.image_ids[image_index]
+			data_image = self.dataset[image_id]
 
 			# Get GT bounding boxes and masks for image.
 			# image.shape = (height, width, 3)  resized
