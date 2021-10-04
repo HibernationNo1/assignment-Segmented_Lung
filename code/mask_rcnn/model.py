@@ -1425,7 +1425,6 @@ def load_image_gt(data_image, image_id, config):
 	# 받아온 image는 list type임 (json저장할 때 numpy로 저장 안돼서 list로 바꾼 상태)
 	image = np.array(image)
 
-
 	## mask, class_ids
 	mask_list = list()
 	class_ids = list()
@@ -1677,32 +1676,35 @@ class DataGenerator(KU.Sequence):
 			- batch_mrcnn_bbox
 			- batch_mrcnn_mask
 		"""
-		
 		batch_item_index = 0  # batch item inde
 		index = -1
 
 		while batch_item_index < self.batch_size:
+			# Increment index to pick next image.	
+			index = (index + 1) % len(self.image_ids)
+			image_index = self.image_ids[index]
+
 			# Shuffle if at the start of an epoch
 			if self.shuffle and index == 0:
 				np.random.shuffle(self.image_ids)
-			 
-			# Increment index to pick next image.	
-			index = (index + 1) % len(self.image_ids)
-			image_id = self.image_ids[index]
 
-			# self.dataset : [["instance_info", "image], ["instance_info", "image]... 
+			# 현재 image index
+			image_id = self.image_ids[image_index]
+
+			# self.dataset : [["annotation", "image], ["annotation", "image]... 
 			# 의 형태이기 때문에 1장의 image에 대한 data만 extract
-			data_image = self.dataset[image_id]
+			data_image = self.dataset[image_index]
 
-			# Get GT bounding boxes and masks for image.
-			# image.shape = (height, width, 3)  resized
-			# gt_class_ids.shape =  (instance_count) == [0, 1]
-			# gt_boxes.shape = (instance_count, 4),  	4 : [y1, x1, y2, x2]
-			# gt_masks.shape = (height, width, instance_count)
-			# instance_count : number of objects which in image
+			#id_tmp = data_image["image_info"]["image_id"]
+
+			#print(f"\n		### image_id : {image_id}")
+			#print(f"		### id_tmp : {id_tmp}")
+			#print(f"		@@@ image_index : {image_index}")
+			
 			(image, image_meta, gt_class_ids, 
 			gt_boxes, gt_masks) = load_image_gt(data_image, image_id, self.config)
 
+			
 			# Skip images that have no instances.
 			# 해당 프로젝트의 data에선 해당없음
 			if not np.any(gt_class_ids > 0):
