@@ -1,0 +1,6 @@
+D:Projectproject4model_mask-rcnnlungs_0 filter=lfs diff=lfs merge=lfs -text
+D:/Project/project4/model_mask-rcnn/lungs_0 filter=lfs diff=lfs merge=lfs -text
+D:/Project/project4/model_mask-rcnn/lungs_1 filter=lfs diff=lfs merge=lfs -text
+D:/Project/project4/model_mask-rcnn/lungs_2 filter=lfs diff=lfs merge=lfs -text
+D:/Project/project4/model_mask-rcnn/lungs_3 filter=lfs diff=lfs merge=lfs -text
+D:/Project/project4/model_mask-rcnn/lungs_4 filter=lfs diff=lfs merge=lfs -text
