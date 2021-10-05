@@ -8,11 +8,13 @@ png 또는 jpg 형식의 file을 input으로 받은 후 trained model에 의한 
 
 ```python
 import os
+import cv2
+import glob
 
 import visualize
 import utils
 import config 
-from model import load_image_gt, MaskRCNN
+from model import MaskRCNN
 ```
 
 
@@ -20,7 +22,7 @@ from model import load_image_gt, MaskRCNN
 ### set Inference Config
 
 ```python
-class InferenceConfig(config.TrainConfig):
+class InferenceConfig(TrainConfig):
 	GPU_COUNT = 1
 	IMAGES_PER_GPU = 1
 
@@ -29,16 +31,25 @@ class InferenceConfig(config.TrainConfig):
 
 	DETECTION_MAX_INSTANCES = 20
 
+	# True : 여러 model을 사용하여 inference 후 ensemble bagging
+	# False : 단일 model을 사용하여 inference
+	ENSEMBLE = True
+
+	# load 할 model의 개수
+	NUMBER_OF_MODEL = 5
+
+	# True : .png 형식의 file로 비교 image save
+	# False : plt.show()를 통해 window창으로 image 시각화
 	SAVE_RESULT = True
 ```
 
 - `inference_config.SAVE_RESULT = False` 
 
-  infetence 결과를 `plt.show()` 를 통해 보여준다.
+  infetence 결과를 `plt.show()` 를 통해 window로 보여줍니다.
 
 - `inference_config.SAVE_RESULT = True`
 
-   infetence 결과에 대해 original input image와 비교하여 png file로 저장한다.
+   infetence 결과에 대해 original input image와 비교하여 png형식의 file로 저장합니다.
 
   
 
@@ -62,28 +73,41 @@ if inference_config.SAVE_RESULT:
 	os.makedirs(path_result, exist_ok=True)
 ```
 
- [sample_test_image](https://github.com/HibernationNo1/assignment-Segmented_Lung/tree/master/sample_test_image) 
 
 
 
 
-
-### Create model in inference mode
+### Create model in inference mode and load weights
 
 ```python
-model = MaskRCNN(mode="inference", 
-						config=inference_config,
-						model_dir=model_dir)
+model_list = list()
+if inference_config.ENSEMBLE: 
+	for i in range(inference_config.NUMBER_OF_MODEL):
+		# Create model in inference mode
+		model = MaskRCNN(mode="inference", 
+							config=inference_config,
+							model_dir=model_dir)
+		# load weights
+		model_path = model.find_last(file_name = "_" + str(i))
+		model.load_weights(model_path, by_name=True)
+		# model_list [model_0, model_1, ...]
+		model_list.append(model)
+else : 
+	model = MaskRCNN(mode="inference", 
+							config=inference_config,
+							model_dir=model_dir)
+	model_path = model.find_last()
+	model.load_weights(model_path, by_name=True)
+	model_list.append(model)
 ```
 
+- `inference_config.ENSEMBLE = True` 
 
+  여러 model을 통해 inference 결과를 얻고 집계하는 ensemble - bagging 기법을 사용합니다.
 
-### load weights
+- `inference_config.ENSEMBLE = False` 
 
-```python
-model_path = model.find_last()
-model.load_weights(model_path, by_name=True)
-```
+  단일 model을 통해 inference 결과를 얻습니다.
 
 
 
@@ -96,30 +120,36 @@ for iter, path_ in enumerate(sorted(glob.glob (path_dataset + '\*.*'))):
 	title = path_.split("\\")[-1]
 	original_image = cv2.imread(path_)	# <class 'numpy.ndarray'>
 	original_image = utils.preprocessing_HE(original_image)
+
 	print(f"file name : {title}")
 
+	result_list = list()
+
+	verbose = 0
+	for i in range(len(model_list)):
+		if i == len(model_list) - 1:
+			verbose = 1
+
+		results = model_list[i].detect([original_image], verbose=verbose)
+		# result_list = [results_1, results_2, results_3]
+		result_list.append(results)
 
 	# results = ["rois" : [num_rois, (y1, x1, y2, x2)], 
 	#			 "class_ids" : [num_rois]
 	#			 "scores": [num_rois]
 	#  			 "masks": [H, W, num_rois] 
-	results = model.detect([original_image], verbose=1)
 
 
-	r = results[0]
 	visualize.display_instances(original_image, 
-								r['rois'], r['masks'], r['class_ids'], r['scores'], 
-								title, 
+								len(model_list),
+								result_list, 
+								title,
 								save = inference_config.SAVE_RESULT, path = path_result)
 ```
 
+image Ensemble, Morphology, Labeling 연산은 [visualize.py](https://github.com/HibernationNo1/project_segmentation_lungs/blob/master/code/mask_rcnn/visualize.py)에서 확인하실 수 있습니다.
 
 
-- **`inference_config.SAVE_RESULT = True`** 인 경우
-
-  image 저장
-
-![](https://github.com/HibernationNo1/assignment-Segmented_Lung/blob/master/image/r1.png?raw=true)
 
 
 
@@ -143,41 +173,62 @@ inference_config = config.InferenceConfig()
 # path of model to load weights
 model_dir = os.path.join(os.getcwd(), "model_mask-rcnn")
 # path of image to inference
-path_dataset = os.path.join(os.getcwd() , 'sample_test_image')
+path_dataset = os.path.join(os.getcwd() , 'test_image')
 
 if inference_config.SAVE_RESULT:
 	path_result = os.path.join(os.getcwd() , 'result_inference')
 	os.makedirs(path_result, exist_ok=True)  
 
 
+model_list = list()
+if inference_config.ENSEMBLE: 
+	for i in range(inference_config.NUMBER_OF_MODEL):
+		# Create model in inference mode
+		model = MaskRCNN(mode="inference", 
+							config=inference_config,
+							model_dir=model_dir)
+		# load weights
+		model_path = model.find_last(file_name = "_" + str(i))
+		model.load_weights(model_path, by_name=True)
+		# model_list [model_0, model_1, ...]
+		model_list.append(model)
+else : 
+	model = MaskRCNN(mode="inference", 
+							config=inference_config,
+							model_dir=model_dir)
+	model_path = model.find_last()
+	model.load_weights(model_path, by_name=True)
+	model_list.append(model)
 
-# Create model in inference mode
-model = MaskRCNN(mode="inference", 
-						config=inference_config,
-						model_dir=model_dir)
-# load weights
-model_path = model.find_last()
-model.load_weights(model_path, by_name=True)
 
-        
 for iter, path_ in enumerate(sorted(glob.glob (path_dataset + '\*.*'))):	
 	title = path_.split("\\")[-1]
 	original_image = cv2.imread(path_)	# <class 'numpy.ndarray'>
 	original_image = utils.preprocessing_HE(original_image)
+
 	print(f"file name : {title}")
 
+	result_list = list()
+
+	verbose = 0
+	for i in range(len(model_list)):
+		if i == len(model_list) - 1:
+			verbose = 1
+
+		results = model_list[i].detect([original_image], verbose=verbose)
+		# result_list = [results_1, results_2, results_3]
+		result_list.append(results)
 
 	# results = ["rois" : [num_rois, (y1, x1, y2, x2)], 
 	#			 "class_ids" : [num_rois]
 	#			 "scores": [num_rois]
 	#  			 "masks": [H, W, num_rois] 
-	results = model.detect([original_image], verbose=1)
 
 
-	r = results[0]
 	visualize.display_instances(original_image, 
-								r['rois'], r['masks'], r['class_ids'], r['scores'], 
-								title, 
+								len(model_list),
+								result_list, 
+								title,
 								save = inference_config.SAVE_RESULT, path = path_result)
 ```
 
