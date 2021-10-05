@@ -11,7 +11,7 @@ model_dir = os.path.join(os.getcwd(), "model_mask-rcnn")
 os.makedirs(model_dir, exist_ok=True) 
 
 # path of dataset to load
-path_dataset = os.path.join(os.getcwd(), 'training_dataset'  + '\dataset.json')
+path_dataset = os.path.join(os.getcwd(), 'training_dataset_all'  + '\dataset.json')
 
 
 trainig_config = config.TrainConfig()
@@ -31,7 +31,7 @@ model = MaskRCNN(mode="training", config = trainig_config, model_dir = model_dir
 # 			layers="all")
 
 
-model.load_weights(model.find_last(), by_name=True)
+
 model.train(dataset_train, dataset_validation, 
 			learning_rate=trainig_config.LEARNING_RATE, 
 			epochs= 5, 

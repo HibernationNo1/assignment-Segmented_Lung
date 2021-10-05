@@ -20,11 +20,11 @@ IMAGE_SIZE = (256, 256,3)
 
 # Parameter
 path_base_model = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\models')
-path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\tmp_images')  
+path_base_input = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\tmp')  
 
 path_base_result = os.path.join(os.getcwd() , 'code' + '\create_dataset' + '\\result')
 os.makedirs(path_base_result, exist_ok=True)  
-path_save_training_dataset = os.path.join(os.getcwd() , 'training_dataset') # instance for save of distinguish image 
+path_save_training_dataset = os.path.join(os.getcwd() , 'training_dataset_4') # instance for save of distinguish image 
 os.makedirs(path_save_training_dataset, exist_ok=True)
 
 

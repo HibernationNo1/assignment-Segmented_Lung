@@ -1694,12 +1694,7 @@ class DataGenerator(KU.Sequence):
 			# self.dataset : [["annotation", "image], ["annotation", "image]... 
 			# 의 형태이기 때문에 1장의 image에 대한 data만 extract
 			data_image = self.dataset[image_index]
-
-			#id_tmp = data_image["image_info"]["image_id"]
-
-			#print(f"\n		### image_id : {image_id}")
-			#print(f"		### id_tmp : {id_tmp}")
-			#print(f"		@@@ image_index : {image_index}")
+			# data_image = self.dataset[image_id]
 			
 			(image, image_meta, gt_class_ids, 
 			gt_boxes, gt_masks) = load_image_gt(data_image, image_id, self.config)
