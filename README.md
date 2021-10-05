@@ -48,21 +48,41 @@ loss는 tenserboard를 사용해 시각화 했습니다.
 
 각각의 dataset을 독립적으로 학습시킨 경우와, 여러 dataset을 결합하여 학습시킨 경우 성능이 각기 다르게 나오는 것을 확인했습니다.
 
-가장 이상적인 segmentation을 구현하기 위해 여러 dataset으로 5개의 model을 학습시켰고, 모든 model의 결과를 집계하는 Bagging 기법을 사용했습니다.
-
-
-
-![](https://github.com/HibernationNo1/project_segmentation_lungs/blob/master/image/r_5.png?raw=true)
-
-
+가장 이상적인 segmentation을 구현하기 위해 여러 dataset으로 5개의 model을 학습시켰고, 모든 model의 결과를 집계하는 ensemble - Bagging 기법을 사용했습니다.
 
 ![](https://github.com/HibernationNo1/project_segmentation_lungs/blob/master/image/r_6.png?raw=true)
+
+code : [visualize.py](https://github.com/HibernationNo1/project_segmentation_lungs/blob/master/code/mask_rcnn/visualize.py)
+
+
+
+이후 result image에 대해 Morphology - closing 연산과 Labeling 을 활용하여 가장 명확한 형태의 lung instance가 남을 수 있도록 했습니다.![](https://github.com/HibernationNo1/project_segmentation_lungs/blob/master/image/r_5.png?raw=true)
+
+
 
 
 
 **trained model**
 
-- 
+- [model_0](https://github.com/HibernationNo1/project_segmentation_lungs/tree/master/model_mask-rcnn/lungs_0)
+
+  학습시 사용된 dataset image : [covid19-image-dataset](https://www.kaggle.com/pranavraikokte/covid19-image-dataset)
+
+  [model_1](https://github.com/HibernationNo1/project_segmentation_lungs/tree/master/model_mask-rcnn/lungs_1)
+
+  학습시 사용된 dataset image : [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
+
+  [model_2](https://github.com/HibernationNo1/project_segmentation_lungs/tree/master/model_mask-rcnn/lungs_2)
+
+  학습시 사용된 dataset image : [covid-patients-chest-xray](https://www.kaggle.com/ankitachoudhury01/covid-patients-chest-xray)
+
+  [model_3](https://github.com/HibernationNo1/project_segmentation_lungs/tree/master/model_mask-rcnn/lungs_3)
+
+  학습시 사용된 dataset image : [covid19-radiography-dataset](https://www.kaggle.com/preetviradiya/covid19-radiography-dataset)
+
+  [model_4](https://github.com/HibernationNo1/project_segmentation_lungs/tree/master/model_mask-rcnn/lungs_4)
+
+  학습시 사용된 dataset image : 위 모든 dataset의 혼합
 
 > 해당 model과 sample test image을 통해 바로 segmentation을 진행할 수 있는 code를 ipynb file로 업로드 하기 위해 version문제를 해결하고 있습니다.
 
