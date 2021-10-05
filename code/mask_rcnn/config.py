@@ -191,8 +191,8 @@ class TrainConfig(BaseConfig):
 	NAME = "lungs"
     
 	
-	STEPS_PER_EPOCH = 500
-	VALIDATION_STEPS = 300
+	STEPS_PER_EPOCH = 1000
+	VALIDATION_STEPS = 1000
 
 	POST_NMS_ROIS_TRAINING = 500
 	POST_NMS_ROIS_INFERENCE = 250
@@ -243,4 +243,15 @@ class InferenceConfig(TrainConfig):
 
 	DETECTION_MAX_INSTANCES = 20
 
+
+
+	# True : 여러 model을 사용하여 inference 후 ensemble bagging
+	# False : 단일 model을 사용하여 inference
+	ENSEMBLE = True
+
+	# load 할 model의 개수
+	NUMBER_OF_MODEL = 5
+
+	# True : .png 형식의 file로 비교 image save
+	# False : plt.show()를 통해 window창으로 image 시각화
 	SAVE_RESULT = True
