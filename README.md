@@ -128,11 +128,11 @@ code : [visualize.py](https://github.com/HibernationNo1/project_segmentation_lun
 
 #### tools
 
-| name   | version | note             |
-| ------ | ------- | ---------------- |
-| CUDA   | 11.0    | cudart64_110.dll |
-| cuDNN  | 8.2     | cudnn64_8.dll    |
-| python | 3.8.8   |                  |
+| name      | version | note             |
+| --------- | ------- | ---------------- |
+| CUDA 10.1 | 11.0    | cudart64_110.dll |
+| cuDNN     | 8.2     | cudnn64_8.dll    |
+| python    | 3.8.8   |                  |
 
 #### package
 
@@ -149,11 +149,11 @@ code : [visualize.py](https://github.com/HibernationNo1/project_segmentation_lun
 
 #### tools
 
-| name   | version | note             |
-| ------ | ------- | ---------------- |
-| CUDA   | 10.0    | cudart64_100.dll |
-| cuDNN  | 7.6.4   | cudnn64_7.dll    |
-| python | 3.7.11  |                  |
+| name      | version | note             |
+| --------- | ------- | ---------------- |
+| CUDA 10.1 | 10.0    | cudart64_100.dll |
+| cuDNN     | 7.6.4   | cudnn64_7.dll    |
+| python    | 3.7.11  |                  |
 
 #### package
 
